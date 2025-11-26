@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 8 - Input Validation</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        form { width: 350px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; }
+        .error { color: red; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<h2>Secure Registration Form</h2>
+
+<form id="regForm" onsubmit="return validateForm()">
+    <label>First Name:</label>
+    <input type="text" id="fname">
+
+    <label>Last Name:</label>
+    <input type="text" id="lname">
+
+    <label>Email:</label>
+    <input type="email" id="email">
+
+    <label>Password:</label>
+    <input type="password" id="password">
+
+    <label>Confirm Password:</label>
+    <input type="password" id="confirmPassword">
+
+    <button type="submit">Submit</button>
+
+    <p class="error" id="errorMsg"></p>
+</form>
+
+<script>
+// Encode user input to prevent XSS
+function sanitizeInput(input) {
+    return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function validateForm() {
+    let fname = sanitizeInput(document.getElementById("fname").value.trim());
+    let lname = sanitizeInput(document.getElementById("lname").value.trim());
+    let email = sanitizeInput(document.getElementById("email").value.trim());
+    let pass = document.getElementById("password").value.trim();
+    let confirmPass = document.getElementById("confirmPassword").value.trim();
+
+    let error = document.getElementById("errorMsg");
+
+    if (!fname || !lname || !email || !pass || !confirmPass) {
+        error.innerHTML = "All fields must be filled.";
+        return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.match(emailRegex)) {
+        error.innerHTML = "Enter a valid email address.";
+        return false;
+    }
+
+    if (pass !== confirmPass) {
+        error.innerHTML = "Passwords do not match.";
+        return false;
+    }
+
+    error.innerHTML = "";
+    alert("Form submitted securely!");
+    return true;
+}
+</script>
+
+</body>
+</html>
